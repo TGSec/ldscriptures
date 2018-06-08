@@ -1,6 +1,6 @@
-from . import utils
-from . import lang
-from . import exceptions
+from .utils import *
+from .lang import *
+from .exceptions import *
 
 import re
 import requests
@@ -10,20 +10,42 @@ def set_language(lang_text):
     try:
         lang.lang_verify(lang_text)
     except:
-        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(langs)))
+        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(lang.langs)))
     
     lang.default = lang_text
-    
 
-def get_scripture(ref):
-    book_name, chapter, verse = utils.reference_spliter(ref)
+def request_chapter_verses(book_name, chapter, language):
+    requester = PageRequester(language)
+    scripture = lang.match_scripture(book_name, language)
+    book_code = lang.get_book_code(book_name, language)
+    chapter = str(chapter)
+    chapter_html = requester.request_scripture(scripture, book_code, chapter)
+    ext = PageExtractor(chapter_html)
+    return ext.verses()
+
+def get(ref):
+    book_name, chapter, verses = utils.reference_split(ref)
     
-    if len(chapter) == 1:
-        requester = PageRequester()
+    if len(chapter) == 1 and len(verses) == 0:
+        verses = request_chapter_verses(book_name, chapter[0], lang.default)
+        return verses
+
+
+class Verse:
+
+    def __init__(self, brute_verse):
+        self.brute_verse = brute_verse
+        self.number = int(brute_verse.split(' ')[0])
+        self.text = brute_verse.split(' ', 1)[1]
+        
+    def __repr__(self):
+        return self.brute_verse
+
 
 class PageExtractor:
 
     def __init__(self, html):
+        
         self.html = BeautifulSoup(html, 'html5lib')
     
     def verses(self):
@@ -35,7 +57,7 @@ class PageExtractor:
         for verse in brute_verses:
             for tag in verse.find_all('sup'):
                 tag.clear()
-            verses.append(verse.get_text().replace('\u2014', '-').replace('\xa0', ' '))
+            verses.append(verse.get_text().replace('\u2014', '-').replace('\xa0', ' ').replace(chr(182) + ' ', ''))
         
         return verses
         
@@ -83,9 +105,9 @@ class PageExtractor:
 
 class PageRequester:
     
-    def __init__(self, lang=lang.default):
-        self.lang = lang
-    
+    def __init__(self, language=lang.default):
+        self.language = language
+        
     def url_compose(self, scripture, book, chapter):
         scripture_url = '/' + scripture
             
@@ -93,7 +115,7 @@ class PageRequester:
         
         chapter_url = '/' + chapter
         
-        url = utils.scriptures_url_base + scripture_url + book_url + chapter_url + '?lang=' + self.lang
+        url = utils.scriptures_url_base + scripture_url + book_url + chapter_url + '?lang=' + self.language
         
         return url
     

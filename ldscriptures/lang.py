@@ -1,10 +1,11 @@
 # coding: latin-1
+from .utils import *
 from . import exceptions
 from . import utils
 
 default = 'eng'
 
-langs = ['eng', 'pt', 'spa']
+langs = ['eng', 'por', 'spa']
 
 class Eng:  # English
 
@@ -40,7 +41,7 @@ class Spa:  # Spanish
     pgp_books = ['Moisés', 'Abraham', 'José Smith-Mateo', 'José Smith-Historia', 'Artículos de Fe']
 
 
-class Pt:  # Portuguese
+class Por:  # Portuguese
 
     ot_books = ['Gênesis', 'Êxodo', 'Levítico', 'Números', 'Deuteronômio', 'Josué', 'Juízes', 'Rute', '1 Samuel', '2 Samuel', '1 Reis', '2 Reis',
                 '1 Crônicas', '2 Crônicas', 'Esdras', 'Neemias', 'Ester', 'Jó', 'Salmos', 'Provérbios', 'Eclesiastes', 'Cantares de Salomão',
@@ -59,53 +60,58 @@ class Pt:  # Portuguese
 
 eng = Eng
 spa = Spa
-pt = Pt
+por = Por
 
 
-def lower_list(cap_list):
-    low_list = []
-    for item in cap_list:
-        low_list.append(item.lower())
-    return low_list
-
-
-def lang_verify(lang):
-    if lang in langs:
-        return eval(lang)
+def lang_verify(language):
+    if language in langs:
+        return eval(language)
     else:
-        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(lang), str(langs)))
+        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(language), str(langs)))
 
 
-def match_scripture(book_name, lang):
+def match_scripture(book_name, language):
+    language = lang_verify(language)
     book_name = book_name.lower()
     scripture = ''
     
-    if book_name in lower_list(lang.ot_books):
+    if book_name in utils.lower_list(language.ot_books):
         scripture = 'ot'
-        pos = item_position(book_name, lower_list(lang.ot_books))
-        code = utils.ot_data.codes[pos]
-    
-    if book_name in lower_list(lang.nt_books):
+    elif book_name in utils.lower_list(language.nt_books):
         scripture = 'nt'
-        
-    if book_name in lower_list(lang.bofm_books):
+    elif book_name in utils.lower_list(language.bofm_books):
         scripture = 'bofm'
-        
-    if book_name in lower_list(lang.pgp_books):
+    elif book_name in utils.lower_list(language.pgp_books):
         scripture = 'pgp'
+    else:
+        raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book_name)))
     
-    raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book_name)))
+    return scripture
 
 
-def item_position(item, list):
-    n = -1
+def get_book_code(book, language):
+    language = lang_verify(language)
+    book = book.lower()
     
-    for i in list:
-        n += 1
-        
-        if i.lower() == item.lower():
-            return n
-    return -1
+    scripture = None
+    codes = None
+    
+    if book in lower_list(language.ot_books):
+        scripture = language.ot_books
+        codes = utils.ot_data['codes']
+    elif book in lower_list(language.nt_books):
+        scripture = language.nt_books
+        codes = utils.nt_data['codes']
+    elif book in lower_list(language.bofm_books):
+        scripture = language.bofm_books
+        codes = utils.bofm_data['codes']
+    elif book in lower_list(language.pgp_books):
+        codes = utils.pgp_data['codes']
+        scripture = language.pgp_books
+    else:
+        raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book)))
+    
+    return codes[item_position(book, scripture)]
 
 
 def translate_book_name(from_lang, to_lang, book_name):

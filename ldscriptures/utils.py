@@ -1,5 +1,14 @@
 import re
-from . import exceptions
+
+from .exceptions import *
+
+
+def lower_list(cap_list):
+    low_list = []
+    for item in cap_list:
+        low_list.append(item.lower())
+    return low_list
+
 
 def string_range(string):
     string = string.split(',')
@@ -19,6 +28,17 @@ def string_range(string):
     num_list.sort()
     
     return num_list
+
+
+def item_position(item, list):
+    n = -1
+    
+    for i in list:
+        n += 1
+        
+        if i.lower() == item.lower():
+            return n
+    return -1
 
 
 def reference_split(reference):
@@ -56,7 +76,7 @@ nt_data = {'chapters': ['28', '16', '24', '21', '28', '16', '16', '13', '6', '6'
                      '2-tim', 'titus', 'philem', 'heb', 'james', '1-pet', '2-pet', '1-jn', '2-jn', '3-jn', 'jude', 'rev']}
 
 bofm_data = {'chapters': ['22', '33', '7', '1', '1', '1', '1', '29', '63', '16', '30', '1', '9', '15', '10'],
-             'codes': ['1-ne', '2-ne', 'jacob', 'enos', 'jarom', 'omni', 'mosiah', 'alma', 'hel', 'morm', 'ether', 'moro']}
+             'codes': ['1-ne', '2-ne', 'jacob', 'enos', 'jarom', 'omni', 'w-of-m', 'mosiah', 'alma', 'hel', '3-ne', '4-ne', 'morm', 'ether', 'moro']}
 
 pgp_data = {'chapters': ['8', '5', '1', '1', '1'],
              'codes': ['moses', 'abr', 'js-m', 'js-h', 'a-of-f']}
