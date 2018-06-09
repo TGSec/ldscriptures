@@ -10,7 +10,7 @@ related content.**
 
 Some features include:
 
--   **Book of Mormon, Bible, Pearl of Great Price and Doctrine and Covenants.**
+-   Easy interface for accessing chapters and versicles of the Bible, Book of Mormon, Doctrine and Covenants and Pearl of Great Price
 
 -   **Official Declarations** (1 & 2) and **FAC Similes** of Book of Abraham.
 

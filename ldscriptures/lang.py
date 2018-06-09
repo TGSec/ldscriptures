@@ -22,7 +22,8 @@ class Eng:  # English
                   'Mormon', 'Ether', 'Moroni']
 
     pgp_books = ['Moses', 'Abraham', 'Joseph Smith-Matthew', 'Joseph Smith-History', 'Articles of Faith']
-
+    
+    dc_testament = ['Doctrine and Covenants']
 
 class Spa:  # Spanish
  
@@ -39,7 +40,8 @@ class Spa:  # Spanish
                   'Mormón', 'Éter', 'Moroni']
     
     pgp_books = ['Moisés', 'Abraham', 'José Smith-Mateo', 'José Smith-Historia', 'Artículos de Fe']
-
+    
+    dc_testament = ['Doctrina y Convenios']
 
 class Por:  # Portuguese
 
@@ -56,6 +58,8 @@ class Por:  # Portuguese
                   'Mórmon', 'Éter', 'Morôni']
     
     pgp_books = ['Moisés', 'Abraão', 'Joseph Smith-Mateus', 'Joseph Smith-História', 'Regras de Fé']
+    
+    dc_testament = ['Doutrina e Convênios']
 
 
 eng = Eng
@@ -83,6 +87,8 @@ def match_scripture(book_name, language):
         scripture = 'bofm'
     elif book_name in utils.lower_list(language.pgp_books):
         scripture = 'pgp'
+    elif book_name in utils.lower_list(language.dc_testament):
+        scripture = 'dc-testament'
     else:
         raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book_name)))
     
@@ -93,7 +99,6 @@ def get_book_code(book, language):
     language = lang_verify(language)
     book = book.lower()
     
-    scripture = None
     codes = None
     
     if book in lower_list(language.ot_books):
@@ -108,6 +113,9 @@ def get_book_code(book, language):
     elif book in lower_list(language.pgp_books):
         codes = utils.pgp_data['codes']
         scripture = language.pgp_books
+    elif book in lower_list(language.dc_testament):
+        codes = ['dc']
+        scripture = language.dc_testament
     else:
         raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book)))
     

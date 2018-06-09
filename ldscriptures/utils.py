@@ -1,6 +1,6 @@
 import re
 
-from .exceptions import *
+from . import exceptions
 
 
 def lower_list(cap_list):
@@ -8,7 +8,6 @@ def lower_list(cap_list):
     for item in cap_list:
         low_list.append(item.lower())
     return low_list
-
 
 def string_range(string):
     string = string.split(',')
@@ -29,6 +28,12 @@ def string_range(string):
     
     return num_list
 
+def better_capitalize(text):
+    splited = text.split(' ')
+    final = ''
+    for part in splited:
+        final = final + ' ' + part.capitalize()
+    return final.strip()
 
 def item_position(item, list):
     n = -1
@@ -47,7 +52,7 @@ def reference_split(reference):
     if re.match(patt, reference):
         splited = list(re.findall(patt, reference)[0])
             
-        if ('-' in splited[1] or ',' in splited[1]) and splited[2] != '':
+        if ('-' in splited[1] or ',' in splited[1]) and len(splited[2]) > 0:
             raise exceptions.InvalidScriptureReference('Can not exist range or list in chapter and exist verse.')
         
         else:

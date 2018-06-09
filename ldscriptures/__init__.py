@@ -14,6 +14,7 @@ def set_language(lang_text):
     
     lang.default = lang_text
 
+
 def request_chapter_verses(book_name, chapter, language):
     requester = PageRequester(language)
     scripture = lang.match_scripture(book_name, language)
@@ -23,23 +24,55 @@ def request_chapter_verses(book_name, chapter, language):
     ext = PageExtractor(chapter_html)
     return ext.verses()
 
+
 def get(ref):
     book_name, chapter, verses = utils.reference_split(ref)
     
     if len(chapter) == 1 and len(verses) == 0:
-        verses = request_chapter_verses(book_name, chapter[0], lang.default)
-        return verses
+        chapter_verses = request_chapter_verses(book_name, chapter[0], lang.default)
+        return Chapter(book_name + ' ' + str(chapter[0]), chapter_verses)
+    
+    if len(chapter) == 1:
+        chapter_verses = request_chapter_verses(book_name, chapter[0], lang.default)
+        nverses = []
+        for verse in chapter_verses:
+            if verse.number in verses:
+                nverses.append(verse)
+        
+        return Chapter(book_name + ' ' + str(chapter[0]), nverses)
+    
+    if len(chapter) > 1:
+        req_chapters = []
+        for ch in chapter:
+            req_chapters.append(Chapter(book_name + ' ' + str(ch), request_chapter_verses(book_name, str(ch), lang.default)))
+        return req_chapters
 
+class Chapter(list):
+    
+    def __new__(self, ref, verses):
+        return list.__new__(self, verses)
+    
+    def __init__(self, ref, verses):
+        list.__init__(self, verses)
+        self.ref = ref
+        
+        verses_text = ''
+        
+        for verse in verses:
+            verses_text = verses_text + verse + '\n'
+        
+        self.text = utils.better_capitalize(ref) + '\n\n' + verses_text.strip()
+    
 
-class Verse:
-
+class Verse(str):
+    
+    def __new__(self, brute_verse):
+        return str.__new__(self, brute_verse)
+    
     def __init__(self, brute_verse):
         self.brute_verse = brute_verse
         self.number = int(brute_verse.split(' ')[0])
         self.text = brute_verse.split(' ', 1)[1]
-        
-    def __repr__(self):
-        return self.brute_verse
 
 
 class PageExtractor:
@@ -47,6 +80,9 @@ class PageExtractor:
     def __init__(self, html):
         
         self.html = BeautifulSoup(html, 'html5lib')
+    
+    def _clean(self, text):
+        return text.replace('\u2014', ' - ').replace('\xa0', '').replace('\u2019', '\'')
     
     def verses(self):
         verses = []
@@ -57,7 +93,8 @@ class PageExtractor:
         for verse in brute_verses:
             for tag in verse.find_all('sup'):
                 tag.clear()
-            verses.append(verse.get_text().replace('\u2014', '-').replace('\xa0', ' ').replace(chr(182) + ' ', ''))
+            verse = Verse(self._clean(verse.get_text()).replace(chr(182), ''))
+            verses.append(verse)
         
         return verses
         
@@ -67,8 +104,8 @@ class PageExtractor:
         html = self.html
         brute_summ = html.find_all('p', {'class': 'study-summary'})
         
-        for summ in brute_summ:
-            study_summaries.append(summ.get_text().replace('\u2014', ' - ').replace('\xa0', '').replace('  ', ' '))
+        for summ in brute_summ:  #   -  clean "trash" bytes
+            study_summaries.append(summ.get_text().replace('  ', ' '))
             
         return study_summaries
     
