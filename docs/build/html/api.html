@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LDSciptures API Reference &mdash; ldscriptures  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to ldscriptures’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ldscriptures
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LDSciptures API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ldscriptures</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>LDSciptures API Reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ldsciptures-api-reference">
+<span id="api"></span><h1>LDSciptures API Reference<a class="headerlink" href="#ldsciptures-api-reference" title="Permalink to this headline">¶</a></h1>
+<p>The complete public API reference for LDScriptures.</p>
+<span class="target" id="module-ldscriptures"></span><dl class="function">
+<dt id="ldscriptures.ldscriptures.get">
+<code class="descclassname">ldscriptures.</code><code class="descname">get</code><span class="sig-paren">(</span><em>reference</em><span class="sig-paren">)</span><a class="headerlink" href="#ldscriptures.ldscriptures.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets scriptural standard work text by using its reference.</p>
+<dl class="docutils">
+<dt>reference:</dt>
+<dd><p class="first">A normal scriptural reference. It should follow one of the following patterns: “[Book Name] [Chapter]:[Verse]” or “[Book Name] [Chapter]”</p>
+<ul>
+<li><p class="first"><em>Book Name</em> is the name of the scriptural book. It supports any case-insensitive letter, whitespaces and numbers. Examples: “1 John”, “Matthew”, “Alma”.</p>
+</li>
+<li><p class="first"><em>Chapter</em> are the chapter or chapters. It supports any numbers. No white space allowed.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Range: the numbers before and after a hyphen determines a range of chapters. Examples: “1-3” (chapters 1, 2 and 3), “9-10” (chapters 9 and 10)</li>
+<li>List: the comma determines a separator of chapters. Examples: “1,5,6” (1, 5 and 6), “8,37” (8 and 37).</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can mix ranges and lists freely. Examples: “1-3,5” (1, 2, 3 and 5), “5-7,30,40-42” (5, 6, 7, 30, 40, 41 and 42)</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can’t use more than one chapter and determine any verse, or it will raise an exception. Examples: “John 5-6:7”, “Matthew 3,5:2”</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first"><em>Verse</em> are the verse or verses. Its specifications are the same of the <em>Chapter</em>’s specifications.</p>
+</li>
+</ul>
+<p class="last">Example of possible references: “Alma 5:10”, “1 Nephi 3:7-8”, “2 Nephi 32:3-5,7”, “Relevation 10”, “Jacob 3-5”.</p>
+</dd>
+</dl>
+<p>The function returns a Chapter object or a list of Chapter objects (depending of the amount of defined chapters in the <em>reference</em> argument.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="ldscriptures.Verse">
+<em class="property">class </em><code class="descclassname">ldscriptures.</code><code class="descname">Verse</code><span class="sig-paren">(</span><em>brute_verse</em><span class="sig-paren">)</span><a class="headerlink" href="#ldscriptures.Verse" title="Permalink to this definition">¶</a></dt>
+<dd><p>A type class inherited from type <em>str</em> that represents a verse.</p>
+<dl class="attribute">
+<dt id="ldscriptures.Verse.text">
+<code class="descname">text</code><a class="headerlink" href="#ldscriptures.Verse.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the text of the verse (excludes the verse number).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="ldscriptures.Verse.number">
+<code class="descname">number</code><a class="headerlink" href="#ldscriptures.Verse.number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the number of the verse (excludes the verse text).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="ldscriptures.Chapter">
+<em class="property">class </em><code class="descclassname">ldscriptures.</code><code class="descname">Chapter</code><a class="headerlink" href="#ldscriptures.Chapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>A type class inherited from type <em>list</em> that represets a list of verses of a chapter.</p>
+<dl class="attribute">
+<dt id="ldscriptures.Chapter.reference">
+<code class="descname">reference</code><a class="headerlink" href="#ldscriptures.Chapter.reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to ldscriptures’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, CustodiSec.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

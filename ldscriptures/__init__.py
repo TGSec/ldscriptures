@@ -49,12 +49,12 @@ def get(ref):
 
 class Chapter(list):
     
-    def __new__(self, ref, verses):
+    def __new__(self, reference, verses):
         return list.__new__(self, verses)
     
-    def __init__(self, ref, verses):
+    def __init__(self, reference, verses):
         list.__init__(self, verses)
-        self.ref = ref
+        self.reference = reference
         
         verses_text = ''
         
@@ -65,6 +65,9 @@ class Chapter(list):
     
 
 class Verse(str):
+    
+    number = 0
+    text = ''
     
     def __new__(self, brute_verse):
         return str.__new__(self, brute_verse)
