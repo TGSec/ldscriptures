@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; ldscriptures  documentation</title>
+  <title>Installing &mdash; ldscriptures  documentation</title>
   
 
   
@@ -27,7 +27,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="Welcome to ldscriptures’s documentation!" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -59,7 +61,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -76,8 +78,12 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="installing.html">Installing</a></li>
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-via-pip">Installation via pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-via-setup-py">Installing via setup.py</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 </ul>
 
@@ -124,12 +130,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Installing</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/installing.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -141,24 +149,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="installing">
+<span id="id1"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
+<p>Beginning from the begin, we need to first install the library before we start using it.
+The recommended installation method is the default Python module manager <em>pip</em>. You can also install it by downloading the project in Github and running the setup.py.
+Both methods will be explained in this article.</p>
+<div class="section" id="installation-via-pip">
+<h2>Installation via pip<a class="headerlink" href="#installation-via-pip" title="Permalink to this headline">¶</a></h2>
+<p>The most basic way of installing LDSCriptures is using pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install ldscriptures
+</pre></div>
+</div>
+<p>Of, if you want to update it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U ldscriptures
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-via-setup-py">
+<h2>Installing via setup.py<a class="headerlink" href="#installing-via-setup-py" title="Permalink to this headline">¶</a></h2>
+<p>Ok, ok, you want the hard way. First, you need to download the <a class="reference external" href="https://github.com/TGSec/ldscriptures/archive/master.zip">zip file</a> containing the module, from Github.</p>
+<p>Next, you need to extract the files. After extracting, you just need to run the following command in the directory that you extracted (where “xx” is your Python version):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pythonxx setup.py install
+</pre></div>
+</div>
+<p>Or, if you just want to build it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pythonxx setup.py build
+</pre></div>
+</div>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to ldscriptures’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -198,7 +232,6 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -208,14 +241,7 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
-   
-
+  </script> 
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 .. _api:
 
-LDSciptures API Reference
-=========================
+API Reference
+=============
 
 The complete public API reference for LDScriptures.
 

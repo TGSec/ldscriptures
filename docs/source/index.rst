@@ -9,6 +9,7 @@ Welcome to ldscriptures's documentation!
 .. toctree::
    :maxdepth: 1
    
+   installing
    api
    
 
