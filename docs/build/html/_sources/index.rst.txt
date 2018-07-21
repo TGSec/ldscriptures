@@ -10,6 +10,7 @@ Welcome to ldscriptures's documentation!
    :maxdepth: 1
    
    installing
+   usage
    api
    
 
