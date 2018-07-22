@@ -61,7 +61,7 @@ class Chapter(list):
         for verse in verses:
             verses_text = verses_text + verse + '\n'
         
-        self.text = utils.better_capitalize(ref) + '\n\n' + verses_text.strip()
+        self.text = utils.better_capitalize(reference) + '\n\n' + verses_text.strip()
     
 
 class Verse(str):
@@ -82,7 +82,7 @@ class PageExtractor:
 
     def __init__(self, html):
         
-        self.html = BeautifulSoup(html, 'html5lib')
+        self.html = BeautifulSoup(html, 'html.parser')
     
     def _clean(self, text):
         return text.replace('\u2014', ' - ').replace('\xa0', '').replace('\u2019', '\'')

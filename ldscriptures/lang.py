@@ -3,147 +3,110 @@ from .utils import *
 from . import exceptions
 from . import utils
 
+import json
+import os
+
+try:
+    languages_file = open(os.path.join(os.path.dirname(__file__), 'languages.json'))
+    language_data = json.loads(languages_file.read())
+except:
+    raise exceptions.MissingLanguageData('error in finding or openning "languages.json".')
+
 default = 'eng'
 
-langs = ['eng', 'por', 'spa']
+available = list(language_data.keys())
 
-class Eng:  # English
+def set_default(language):
+    if not language in available:
+        raise exceptions.InvalidLang('the language "{}" is not an available language (see ldscriptures.lang.available).'.format(language))
+    default = language
 
-    ot_books = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings',
-                '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalms', 'Proverbs', 'Ecclesiastes', 'Song of Solomon', 'Isaiah',
-                'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah',
-                'Haggai', 'Zechariah', 'Malachi']
-
-    nt_books = ['Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians', 'Galatians', 'Ephesians', 'Philippians',
-                'Colossians', '1 Thessalonians', '2 Thessalonians', '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter',
-                '2 Peter', '1 John', '2 John', '3 John', 'Jude', 'Revelation']
-
-    bofm_books = ['1 Nephi', '2 Nephi', 'Jacob', 'Enos', 'Jarom', 'Omni', 'Words of Mormon', 'Mosiah', 'Alma', 'Helaman', '3 Nephi', '4 Nephi',
-                  'Mormon', 'Ether', 'Moroni']
-
-    pgp_books = ['Moses', 'Abraham', 'Joseph Smith-Matthew', 'Joseph Smith-History', 'Articles of Faith']
-    
-    dc_testament = ['Doctrine and Covenants']
-
-class Spa:  # Spanish
- 
-    ot_books = ['Génesis', 'Éxodo', 'Levítico', 'Números', 'Deuteronomio', 'Josué', 'Jueces', 'Rut', '1 Samuel', '2 Samuel', '1 Reyes', '2 Reyes',
-                '1 Crónicas', '2 Crónicas', 'Esdras', 'Nehemías', 'Ester', 'Job', 'Salmos', 'Proverbios', 'Eclesiastés', 'Cantares', 'Isaías',
-                'Jeremías', 'Lamentaciones', 'Ezequiel', 'Daniel', 'Oseas', 'Joel', 'Amós', 'Abdías', 'Jonás', 'Miqueas', 'Nahúm', 'Habacuc',
-                'Sofonías', 'Hageo', 'Zacarías', 'Malaquías']
-    
-    nt_books = ['Mateo', 'Marcos', 'Lucas', 'Juan', 'Hechos', 'Romanos', '1 Corintios', '2 Corintios', 'Gálatas', 'Efesios', 'Filipenses',
-                'Colosenses', '1 Tesalonicenses', '2 Tesalonicenses', '1 Timoteo', '2 Timoteo', 'Tito', 'Filemón', 'Hebreos', 'Santiago', '1 Pedro',
-                '2 Pedro', '1 Juan', '2 Juan', '3 Juan', 'Judas', 'Apocalipsis']
-    
-    bofm_books = ['1 Nefi', '2 Nefi', 'Jacob', 'Enós', 'Jarom', 'Omni', 'Palabras de Mormón', 'Mosíah', 'Alma', 'Helamán', '3 Nefi', '4 Nefi',
-                  'Mormón', 'Éter', 'Moroni']
-    
-    pgp_books = ['Moisés', 'Abraham', 'José Smith-Mateo', 'José Smith-Historia', 'Artículos de Fe']
-    
-    dc_testament = ['Doctrina y Convenios']
-
-class Por:  # Portuguese
-
-    ot_books = ['Gênesis', 'Êxodo', 'Levítico', 'Números', 'Deuteronômio', 'Josué', 'Juízes', 'Rute', '1 Samuel', '2 Samuel', '1 Reis', '2 Reis',
-                '1 Crônicas', '2 Crônicas', 'Esdras', 'Neemias', 'Ester', 'Jó', 'Salmos', 'Provérbios', 'Eclesiastes', 'Cantares de Salomão',
-                'Isaías', 'Jeremias', 'Lamentações', 'Ezequiel', 'Daniel', 'Oseias', 'Joel', 'Amós', 'Obadias', 'Jonas', 'Miqueias', 'Naum',
-                'Habacuque', 'Sofonias', 'Ageu', 'Zacarias', 'Malaquias']
-    
-    nt_books = ['Mateus', 'Marcos', 'Lucas', 'João', 'Atos', 'Romanos', '1 Coríntios', '2 Coríntios', 'Gálatas', 'Efésios', 'Filipenses',
-                'Colossenses', '1 Tessalonicenses', '2 Tessalonicenses', '1 Timóteo', '2 Timóteo', 'Tito', 'Filemom', 'Hebreus', 'Tiago', '1 Pedro',
-                '2 Pedro', '1 João', '2 João', '3 João', 'Judas', 'Apocalipse']
-    
-    bofm_books = ['1 Néfi', '2 Néfi', 'Jacó', 'Enos', 'Jarom', 'Ômni', 'Palavras de Mórmon', 'Mosias', 'Alma', 'Helamã', '3 Néfi', '4 Néfi',
-                  'Mórmon', 'Éter', 'Morôni']
-    
-    pgp_books = ['Moisés', 'Abraão', 'Joseph Smith-Mateus', 'Joseph Smith-História', 'Regras de Fé']
-    
-    dc_testament = ['Doutrina e Convênios']
+scripture_data = {
+    'ot': {
+        'chapters': ['50', '40', '27', '36', '34', '24', '21', '4', '31', '24', '22', '25', '29', '36', '10', '13', '10', '42', '150', '31', '12',
+                     '8', '66', '52', '5', '48', '12', '14', '3', '9', '1', '4', '7', '3', '3', '3', '2', '14', '4'],
+        'codes': ['gen', 'ex', 'lev', 'num', 'deut', 'josh', 'judg', 'ruth', '1-sam', '2-sam', '1-kgs', '2-kgs', '1-chr', '2-chr', 'ezra', 'neh', 'esth', 'job', 'ps', 'prov', 'eccl', 'song', 'isa',
+                  'jer', 'lam', 'ezek', 'dan', 'hosea', 'joel', 'amos', 'obad', 'jonah', 'micah', 'nahum', 'hab', 'zeph', 'hag', 'zech', 'mal']
+    },
+    'nt': {
+        'chapters': ['28', '16', '24', '21', '28', '16', '16', '13', '6', '6', '4', '4', '5', '3', '6', '4', '3', '1', '13', '5', '5', '3', '5',
+                     '1', '1', '1', '22'],
+        'codes': ['matt', 'mark', 'luke', 'john', 'acts', 'rom', '1-cor', '2-cor', 'gal', 'eph', 'philip', 'col', '1-thes', '2-thes', ' 1-tim',
+                  '2-tim', 'titus', 'philem', 'heb', 'james', '1-pet', '2-pet', '1-jn', '2-jn', '3-jn', 'jude', 'rev']
+    },
+    'bofm': {
+        'chapters': ['22', '33', '7', '1', '1', '1', '1', '29', '63', '16', '30', '1', '9', '15', '10'],
+        'codes': ['1-ne', '2-ne', 'jacob', 'enos', 'jarom', 'omni', 'w-of-m', 'mosiah', 'alma', 'hel', '3-ne', '4-ne', 'morm', 'ether', 'moro']
+    },
+    'pgp': {
+        'chapters': ['8', '5', '1', '1', '1'],
+        'codes': ['moses', 'abr', 'js-m', 'js-h', 'a-of-f']},
+    'dc-testament': {
+        'chapters': [138],
+        'codes': ['dc']
+    }
+}
 
 
-eng = Eng
-spa = Spa
-por = Por
+def get_language_dict(language):
+    if not language in available:
+        raise exceptions.InvalidLang('the language "{}" is not an available language (see ldscriptures.lang.available).'.format(language))
+    return language_data[language]
 
 
-def lang_verify(language):
-    if language in langs:
-        return eval(language)
-    else:
-        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(language), str(langs)))
-
-
-def match_scripture(book_name, language):
-    language = lang_verify(language)
+def get_scripture_code(book_name, language):
+    language_dict = get_language_dict(language)
     book_name = book_name.lower()
     scripture = ''
     
-    if book_name in utils.lower_list(language.ot_books):
+    if book_name in [book.lower() for book in language_dict['ot']]:
         scripture = 'ot'
-    elif book_name in utils.lower_list(language.nt_books):
+    elif book_name in [book.lower() for book in language_dict['nt']]:
         scripture = 'nt'
-    elif book_name in utils.lower_list(language.bofm_books):
+    elif book_name in [book.lower() for book in language_dict['bofm']]:
         scripture = 'bofm'
-    elif book_name in utils.lower_list(language.pgp_books):
+    elif book_name in [book.lower() for book in language_dict['pgp']]:
         scripture = 'pgp'
-    elif book_name in utils.lower_list(language.dc_testament):
+    elif book_name in [book.lower() for book in language_dict['dc_testament']]:
         scripture = 'dc-testament'
     else:
         raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book_name)))
     
     return scripture
 
+# Deprecated: match_scripture
+match_scripture = get_scripture_code
+
 
 def get_book_code(book, language):
-    language = lang_verify(language)
+    language_dict = get_language_dict(language)
     book = book.lower()
     
-    codes = None
+    scripture = get_scripture_code(book, language)
     
-    if book in lower_list(language.ot_books):
-        scripture = language.ot_books
-        codes = utils.ot_data['codes']
-    elif book in lower_list(language.nt_books):
-        scripture = language.nt_books
-        codes = utils.nt_data['codes']
-    elif book in lower_list(language.bofm_books):
-        scripture = language.bofm_books
-        codes = utils.bofm_data['codes']
-    elif book in lower_list(language.pgp_books):
-        codes = utils.pgp_data['codes']
-        scripture = language.pgp_books
-    elif book in lower_list(language.dc_testament):
-        codes = ['dc']
-        scripture = language.dc_testament
-    else:
-        raise exceptions.InvalidBook('The book \'{}\' does not exist.'.format(str(book)))
+    codes = scripture_data[scripture]['codes']
     
-    return codes[item_position(book, scripture)]
+    return codes[item_position(book, language_dict[scripture])]
 
 
-def translate_book_name(from_lang, to_lang, book_name):
-    from_lang = lang_verify(from_lang)
-    to_lang = lang_verify(to_lang)
+def item_position(item, list):
+    n = -1
     
-    scripture = match_scripture(book_name, from_lang)
+    for i in list:
+        n += 1
+        
+        if i.lower() == item.lower():
+            return n
     
-    if scripture == 'ot':
-        position = item_position(book_name, from_lang.ot_books)
-        if position != -1:
-            return to_lang.ot_books[position]
-            
-    if scripture == 'nt':
-        position = item_position(book_name, from_lang.nt_books)
-        if position != -1:
-            return to_lang.nt_books[position]
+    return -1
+
+
+def translate_book_name(book_name, from_lang, to_lang):
+    from_lang_dict = get_language_dict(from_lang)
+    to_lang_dict = get_language_dict(to_lang)
     
-    if scripture == 'bofm':
-        position = item_position(book_name, from_lang.bofm_books)
-        if position != -1:
-            return to_lang.bofm_books[position]
+    scripture = get_scripture_code(book_name, from_lang)
     
-    if scripture == 'pgp':
-        position = item_position(book_name, from_lang.pgp_books)
-        if position != -1:
-            return to_lang.pgp_books[position]
+    position = item_position(book_name, from_lang_dict[scripture])
+    
+    return to_lang_dict[scripture][position]
