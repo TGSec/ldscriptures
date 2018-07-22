@@ -7,7 +7,7 @@ setup(name='LDScriptures',
       author_email='tgb1@protonmail.com',
       url='https://github.com/tgsec/ldscriptures',
       packages=['ldscriptures'],
-      package_data=['ldscriptures': ['ldscriptures/languages.json']]
+      package_data={'ldscriptures': ['ldscriptures/languages.json']}
       install_requires = ['bs4', 'requests'], 
       keywords = ['mormon', 'lds', 'latter', 'day', 'saints', 'book of mormon', 'scriptures', 'bible', 'pearl of great price',
                   'doctrine and convenants', 'church of jesus christ', 'parse', 'citation']
