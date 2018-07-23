@@ -1,6 +1,6 @@
 from .utils import *
-from .lang import *
-from .exceptions import *
+from . import lang
+from . import exceptions
 
 import re
 import requests
@@ -10,7 +10,7 @@ def set_language(lang_text):
     try:
         lang.lang_verify(lang_text)
     except:
-        raise exceptions.InvalidLang('The language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(lang.langs)))
+        raise exceptions.InvalidLang('the language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(lang.langs)))
     
     lang.default = lang_text
 
@@ -57,9 +57,8 @@ class Reference(str):
     single_verse = False
     single_chapter = False
     no_verse = False
-    book_name = ''
-    chapters = []
-    verses = []
+
+    splited_reference = []
     
     
     def __new__(self, reference_str):
@@ -83,67 +82,86 @@ class Reference(str):
             splited_reference[2] = string_range(splited_reference[2])
         else:
             splited_reference[2] = []
-            
-        self.update()
-    
-    
-    def update(self):
-        print('update got called lol')
+        
+        self.splited_reference = splited_reference
+        
         self.book_name = splited_reference[0]
         self.chapters = splited_reference[1]
         self.verses = splited_reference[2]
-        
-        if len(self.chapters) == 1:
-            self.single_chapter = True
-        
-        if len(self.verses) == 1:
-            self.single_verse = True
-        
-        if len(self.verses) == 0:
-            self.no_verse = True
+    
+    
+    @property
+    def no_verse(self):
+        self.verify()
+        return self.verses == []
+    
+    
+    @property
+    def single_chapter(self):
+        self.verify()
+        return len(self.chapters) == 1
+    
+    
+    @property
+    def single_verse(self):
+        self.verify()
+        return len(self.verses) == 1
+    
+    
+    def verify(self):
+        if len(self.chapters) > 1 and self.verses != []:
+            raise exceptions.InvalidScriptureReference('can\'t be set more than one chapter and be set a/some verse.')
+        if self.book_name == '':
+            raise exceptions.InvalidScriptureReference('"book_name" can\'t be of lenght 0.')
+        return True
     
     
     def _list_to_str(self, list):  # Function to convert a list of int() in a valid reference string. Basic "lexer".
-        range_first = int()
-        range_lenght = 0
-        range_last = int()
+        seq = []
         ranged_ref = []
-        list = set(list)  # For ordering and removing repeated items
-        for item in list:
+        list = sorted(set(list))  # For ordering and removing repeated items
+        last = -1
         
-            if range_lenght == 0:  # Start range
-                range_first = item
-            
-            elif range_lenght > 0 and (range_first+range+lenght) == item:  # Make range
-                range_last = item
-                range_lenght += 1
-            
-            elif range_lenght > 1:  # End of range
-                ranged_ref.append('{}-{}'.format(range_first, range_last))
-                range_first = 0
-                range_last = 0
-                range_lenght = 0
-            
-            elif range_lenght == 1:  # End of little range
-                ranged_ref.append(range_first)
-                ranged_ref.append(range_last)
-                range_first = 0
-                range_last = 0
-                range_lenght = 0
+        for item in list:
+            if seq == []:  # If no seq started
+                seq.append(item)
+            elif len(seq) > 0 and item == last+1:  # If seq started and item is last+1
+                seq.append(item)
+            elif len(seq) <= 2 and item != last+1:  # If seq less or equal to 2 and item not equal to last=1
+                for each in seq:
+                    ranged_ref.append(each)
+                seq = [item]
+            elif len(seq) >= 3 and item != last+1:
+                ranged_ref.append('{}-{}'.format(seq[0], seq[-1]))
+                seq = [item]
+                
+            last = item
+        
+        if len(seq) > 1:
+            ranged_ref.append('{}-{}'.format(seq[0], seq[-1]))
+        elif len(seq) == 1:
+            ranged_ref.append(seq[0])
         
         string = ''
         
         for each in ranged_ref:
-            string += each + ','
+            string += str(each) + ','
         
         return string[:-1]
     
     
     def __str__(self):
+        self.verify()
         if self.no_verse and self.single_chapter:
             return '{book_name} {chapters}'.format(book_name=self.book_name, chapters=self.chapters[0])
         if self.single_verse:
             return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self.verses)
+        if not self.single_verse:
+            return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self._list_to_str(self.verses))
+        if not self.single_chapter:
+            return '{book_name} {chapters}'.format(book_name=self.book_name, chapters=self._list_to_str(self.chapters))
+    
+    __repr__ = __str__
             
     
 
@@ -300,3 +318,6 @@ class PageRequester:
         html = requests.get(url).text
         
         return html
+
+if __name__ == '__main__':
+    ref = Reference('Mateus 5:14-16')._list_to_str([1,3,4,5])
