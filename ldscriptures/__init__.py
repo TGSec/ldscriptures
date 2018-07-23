@@ -15,7 +15,7 @@ def set_language(lang_text):
     lang.default = lang_text
 
 
-def request_chapter_verses(book_name, chapter, language):
+def request_chapter(book_name, chapter, language):
     requester = PageRequester(language)
     scripture = lang.match_scripture(book_name, language)
     book_code = lang.get_book_code(book_name, language)
@@ -26,14 +26,18 @@ def request_chapter_verses(book_name, chapter, language):
 
 
 def get(ref):
+    '''
+    
+    '''
+    
     book_name, chapter, verses = utils.reference_split(ref)
     
     if len(chapter) == 1 and len(verses) == 0:
-        chapter_verses = request_chapter_verses(book_name, chapter[0], lang.default)
+        chapter_verses = request_chapter(book_name, chapter[0], lang.default)
         return Chapter(book_name + ' ' + str(chapter[0]), chapter_verses)
     
-    if len(chapter) == 1:
-        chapter_verses = request_chapter_verses(book_name, chapter[0], lang.default)
+    if len(chapter) == 1 and len(verses) > 0:
+        chapter_verses = request_chapter(book_name, chapter[0], lang.default)
         nverses = []
         for verse in chapter_verses:
             if verse.number in verses:
@@ -41,36 +45,56 @@ def get(ref):
         
         return Chapter(book_name + ' ' + str(chapter[0]), nverses)
     
-    if len(chapter) > 1:
+    if len(chapter) > 1 and len(verses) == 0:
         req_chapters = []
         for ch in chapter:
-            req_chapters.append(Chapter(book_name + ' ' + str(ch), request_chapter_verses(book_name, str(ch), lang.default)))
+            req_chapters.append(Chapter(book_name + ' ' + str(ch), request_chapter(book_name, str(ch), lang.default)))
         return req_chapters
 
+        
 class Chapter(list):
+    '''
+    A class that represents a chapter.
+    '''
+    
+    reference = ''
+    '''The scriptural reference to the chapter.'''
+    
+    complete_text = ''
+    '''A simple way to access the scriptural text of the class. It uses the following format: "{reference}\n\n{verses}"'''
+    
     
     def __new__(self, reference, verses):
         return list.__new__(self, verses)
     
+    
     def __init__(self, reference, verses):
         list.__init__(self, verses)
-        self.reference = reference
+        self.reference = utils.better_capitalize(reference)
         
         verses_text = ''
         
         for verse in verses:
             verses_text = verses_text + verse + '\n'
         
-        self.text = utils.better_capitalize(reference) + '\n\n' + verses_text.strip()
-    
+        verses_text = verses_text.strip()
+        
+        self.text = '{reference}\n\n{verses}'.format(reference=self.reference, verses=verses_text)
+        
 
 class Verse(str):
+    '''A class that represents a single verse. Can be used as a str() to access the entire verse (number + text).'''
     
     number = 0
-    text = ''
+    '''The verse\'s number itself.'''
+    
+    only_text = ''
+    '''The text of the verse, excluding its number.'''
+    
     
     def __new__(self, brute_verse):
         return str.__new__(self, brute_verse)
+    
     
     def __init__(self, brute_verse):
         self.brute_verse = brute_verse
@@ -79,15 +103,27 @@ class Verse(str):
 
 
 class PageExtractor:
-
+    '''
+    A powerful class that extracts the scriptural information from lds.org html.
+    
+    :param str html: The html whose information will be extracted.
+    
+    '''
+    
+    
     def __init__(self, html):
-        
         self.html = BeautifulSoup(html, 'html.parser')
+    
     
     def _clean(self, text):
         return text.replace('\u2014', ' - ').replace('\xa0', '').replace('\u2019', '\'')
     
+    
     def verses(self):
+    '''
+    Get the verses that could be found the html.
+    :return list of :py:class:`Verse` objects.
+    '''
         verses = []
         
         html = self.html
@@ -100,7 +136,8 @@ class PageExtractor:
             verses.append(verse)
         
         return verses
-        
+    
+    
     def study_summaries(self):
         study_summaries = []
         
@@ -111,6 +148,7 @@ class PageExtractor:
             study_summaries.append(summ.get_text().replace('  ', ' '))
             
         return study_summaries
+    
     
     def fac_simile(self):
         html = self.html
@@ -123,6 +161,7 @@ class PageExtractor:
         fac_explanation = fac_explanation.replace('\n\t\t\t\t\t\n\t\t\t\t\t', '').replace('\n\t\t\t\t\t', '\n').replace('\n\t\t\t\t', '')
         
         return [fac_url, fac_explanation]
+        
         
     def official_declaration(self):  # From Doctrine and Covenants
         html = self.html
