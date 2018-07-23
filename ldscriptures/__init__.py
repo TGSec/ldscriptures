@@ -120,10 +120,10 @@ class PageExtractor:
     
     
     def verses(self):
-    '''
-    Get the verses that could be found the html.
-    :return list of :py:class:`Verse` objects.
-    '''
+        '''
+        Get the verses that could be found the html.
+        :return list of :py:class:`Verse` objects.
+        '''
         verses = []
         
         html = self.html
