@@ -51,7 +51,103 @@ def get(ref):
             req_chapters.append(Chapter(book_name + ' ' + str(ch), request_chapter(book_name, str(ch), lang.default)))
         return req_chapters
 
+
+class Reference(str):
+    
+    single_verse = False
+    single_chapter = False
+    no_verse = False
+    book_name = ''
+    chapters = []
+    verses = []
+    
+    
+    def __new__(self, reference_str):
+        return str.__new__(self, reference_str)
+    
+    
+    def __init__(self, reference_str):
+        patt = '^(.+) ((?:[0-9]+(?:-[0-9]+)?,?)*)(?::((?:[0-9]+(?:-[0-9]+)?,?)*))?$'
         
+        if not re.match(patt, reference_str):
+            raise exceptions.InvalidScriptureReference('Regex failure: \'{0}\' is not a valid reference.'.format(reference))
+            
+        splited_reference = list(re.findall(patt, reference_str)[0])
+            
+        if ('-' in splited_reference[1] or ',' in splited_reference[1]) and len(splited_reference[2]) > 0:
+            raise exceptions.InvalidScriptureReference('can\'t be set more than one chapter and be set a/some verse.')
+        
+        splited_reference[1] = string_range(splited_reference[1])
+        
+        if splited_reference[2] != '':
+            splited_reference[2] = string_range(splited_reference[2])
+        else:
+            splited_reference[2] = []
+            
+        self.update()
+    
+    
+    def update(self):
+        print('update got called lol')
+        self.book_name = splited_reference[0]
+        self.chapters = splited_reference[1]
+        self.verses = splited_reference[2]
+        
+        if len(self.chapters) == 1:
+            self.single_chapter = True
+        
+        if len(self.verses) == 1:
+            self.single_verse = True
+        
+        if len(self.verses) == 0:
+            self.no_verse = True
+    
+    
+    def _list_to_str(self, list):  # Function to convert a list of int() in a valid reference string. Basic "lexer".
+        range_first = int()
+        range_lenght = 0
+        range_last = int()
+        ranged_ref = []
+        list = set(list)  # For ordering and removing repeated items
+        for item in list:
+        
+            if range_lenght == 0:  # Start range
+                range_first = item
+            
+            elif range_lenght > 0 and (range_first+range+lenght) == item:  # Make range
+                range_last = item
+                range_lenght += 1
+            
+            elif range_lenght > 1:  # End of range
+                ranged_ref.append('{}-{}'.format(range_first, range_last))
+                range_first = 0
+                range_last = 0
+                range_lenght = 0
+            
+            elif range_lenght == 1:  # End of little range
+                ranged_ref.append(range_first)
+                ranged_ref.append(range_last)
+                range_first = 0
+                range_last = 0
+                range_lenght = 0
+        
+        string = ''
+        
+        for each in ranged_ref:
+            string += each + ','
+        
+        return string[:-1]
+    
+    
+    def __str__(self):
+        if self.no_verse and self.single_chapter:
+            return '{book_name} {chapters}'.format(book_name=self.book_name, chapters=self.chapters[0])
+        if self.single_verse:
+            return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self.verses)
+            
+    
+
+
 class Chapter(list):
     '''
     A class that represents a chapter.
