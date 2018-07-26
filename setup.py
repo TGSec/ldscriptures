@@ -14,7 +14,7 @@ setup(name='LDScriptures',
       include_package_data=True,
       package_data={'ldscriptures': ['ldscriptures/languages.json']},
       long_description=read('README.rst'),
-      install_requires = ['bs4', 'requests'], 
+      install_requires = ['bs4', 'requests', 'autodoc'], 
       keywords = ['mormon', 'lds', 'latter', 'day', 'saints', 'book of mormon', 'scriptures', 'bible', 'pearl of great price',
                   'doctrine and convenants', 'church of jesus christ', 'parse', 'citation']
      )
