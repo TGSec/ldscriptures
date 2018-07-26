@@ -6,13 +6,13 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-def set_language(lang_text):
+def set_language(language):
     try:
-        lang.lang_verify(lang_text)
+        lang.get_language_dict(language)
     except:
         raise exceptions.InvalidLang('the language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(lang.langs)))
     
-    lang.default = lang_text
+    lang.default = language
 
 
 def request_chapter(book_name, chapter, language):
@@ -27,14 +27,17 @@ def request_chapter(book_name, chapter, language):
 
 def get(ref):
     '''
+    Easy way to access the scriptures, using a reference.
+    
+    :param str ref Scriptural reference.
+    :return
     
     '''
     
-    book_name, chapter, verses = utils.reference_split(ref)
+    if type(ref) == str:
+        ref = Reference(ref)
     
-    if len(chapter) == 1 and len(verses) == 0:
-        chapter_verses = request_chapter(book_name, chapter[0], lang.default)
-        return Chapter(book_name + ' ' + str(chapter[0]), chapter_verses)
+    book_name, chapter, verses = ref.book_name, ref.chapters, ref.verses
     
     if len(chapter) == 1 and len(verses) > 0:
         chapter_verses = request_chapter(book_name, chapter[0], lang.default)
@@ -42,13 +45,12 @@ def get(ref):
         for verse in chapter_verses:
             if verse.number in verses:
                 nverses.append(verse)
-        
-        return Chapter(book_name + ' ' + str(chapter[0]), nverses)
+        return Chapter(ref, nverses)
     
     if len(chapter) > 1 and len(verses) == 0:
         req_chapters = []
         for ch in chapter:
-            req_chapters.append(Chapter(book_name + ' ' + str(ch), request_chapter(book_name, str(ch), lang.default)))
+            req_chapters.append(Chapter(ref, request_chapter(book_name, str(ch), lang.default)))
         return req_chapters
 
 
@@ -58,36 +60,67 @@ class Reference(str):
     single_chapter = False
     no_verse = False
 
-    splited_reference = []
+    _splited_reference = []
     
     
     def __new__(self, reference_str):
         return str.__new__(self, reference_str)
     
     
-    def __init__(self, reference_str):
+    def __init__(self, initial_value=False):
+        if type(initial_value) == str:
+            self.set_reference(initial_value)
+    
+    
+    def set_book_name(self, book_name):
+        if self.book_name == '':
+            raise exceptions.InvalidScriptureReference('no book_name.')
+        self._splited_reference[0] = book_name
+    
+    
+    def set_chapters(self, chapters):
+        if chapters == []:
+            raise exceptions.InvalidScriptureReference('no chapter.')
+        
+        for n in chapters:
+            if type(n) != int:
+                exceptions.InvalidScriptureReference('all chapters must be int.')
+        
+        self._splited_reference[1] = chapters
+    
+    
+    def set_verses(self, verses):
+        if verses == []:
+            raise exceptions.InvalidScriptureReference('no verse.')
+        
+        for n in verses:
+            if type(n) != int:
+                exceptions.InvalidScriptureReference('all verses must be int.')
+        
+        self._splited_reference[2] = verses
+    
+    
+    def set_reference(self, reference_str):
         patt = '^(.+) ((?:[0-9]+(?:-[0-9]+)?,?)*)(?::((?:[0-9]+(?:-[0-9]+)?,?)*))?$'
         
         if not re.match(patt, reference_str):
             raise exceptions.InvalidScriptureReference('Regex failure: \'{0}\' is not a valid reference.'.format(reference))
             
-        splited_reference = list(re.findall(patt, reference_str)[0])
+        _splited_reference = list(re.findall(patt, reference_str)[0])
             
-        if ('-' in splited_reference[1] or ',' in splited_reference[1]) and len(splited_reference[2]) > 0:
+        if ('-' in _splited_reference[1] or ',' in _splited_reference[1]) and len(_splited_reference[2]) > 0:
             raise exceptions.InvalidScriptureReference('can\'t be set more than one chapter and be set a/some verse.')
         
-        splited_reference[1] = string_range(splited_reference[1])
+        _splited_reference[1] = string_range(_splited_reference[1])
         
-        if splited_reference[2] != '':
-            splited_reference[2] = string_range(splited_reference[2])
+        if _splited_reference[2] != '':
+            _splited_reference[2] = string_range(_splited_reference[2])
         else:
-            splited_reference[2] = []
+            _splited_reference[2] = []
         
-        self.splited_reference = splited_reference
+        self._splited_reference = _splited_reference
         
-        self.book_name = splited_reference[0]
-        self.chapters = splited_reference[1]
-        self.verses = splited_reference[2]
+        self.verify()
     
     
     @property
@@ -108,11 +141,29 @@ class Reference(str):
         return len(self.verses) == 1
     
     
+    @property
+    def book_name(self):
+        return self._splited_reference[0]
+    
+    
+    @property
+    def chapters(self):
+        return self._splited_reference[1]
+    
+    
+    @property
+    def verses(self):
+        return self._splited_reference[2]
+
+    
     def verify(self):
         if len(self.chapters) > 1 and self.verses != []:
             raise exceptions.InvalidScriptureReference('can\'t be set more than one chapter and be set a/some verse.')
-        if self.book_name == '':
-            raise exceptions.InvalidScriptureReference('"book_name" can\'t be of lenght 0.')
+        if self.chapters == []:
+            raise exceptions.InvalidScriptureReference('"chapters" can\'t be of lenght 0.')
+        for i in self.chapters:
+            if type(i) != int:
+                raise exceptions.InvalidScriptureReference('"chapters" must contain only ints.')
         return True
     
     
@@ -172,7 +223,7 @@ class Chapter(list):
     '''
     
     reference = ''
-    '''The scriptural reference to the chapter.'''
+    '''The scriptural reference to the chapter (Reference object).'''
     
     complete_text = ''
     '''A simple way to access the scriptural text of the class. It uses the following format: "{reference}\n\n{verses}"'''
