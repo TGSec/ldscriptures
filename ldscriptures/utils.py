@@ -30,7 +30,7 @@ def better_capitalize(text):
         final = final + ' ' + part.capitalize()
     return final.strip()
 
-
+'''
 def reference_split(reference):
     patt = '^(.+) ((?:[0-9]+(?:-[0-9]+)?,?)*)(?::((?:[0-9]+(?:-[0-9]+)?,?)*))?$'
     
@@ -51,5 +51,6 @@ def reference_split(reference):
         
     else:
         raise exceptions.InvalidScriptureReference('Regex failure: \'{0}\' is not a valid reference.'.format(reference))
+'''
 
 scriptures_url_base = 'https://www.lds.org/scriptures'

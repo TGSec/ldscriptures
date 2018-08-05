@@ -6,14 +6,6 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-def set_language(language):
-    try:
-        lang.get_language_dict(language)
-    except:
-        raise exceptions.InvalidLang('the language "{}" is not a valid language. Try one: {}.'.format(str(lang_text), str(lang.langs)))
-    
-    lang.default = language
-
 
 def request_chapter(book_name, chapter, language):
     requester = PageRequester(language)
