@@ -14,3 +14,7 @@ class InvalidBook(Exception):
 
 class InvalidScriptureReference(Exception):
     pass
+
+
+class MaximumCacheSizeReached(Exception):
+    pass

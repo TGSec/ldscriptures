@@ -1,6 +1,7 @@
 from .utils import *
 from . import lang
 from . import exceptions
+from . import cache
 
 import re
 import requests
@@ -12,9 +13,16 @@ def request_chapter(book_name, chapter, language):
     scripture = lang.match_scripture(book_name, language)
     book_code = lang.get_book_code(book_name, language)
     chapter = str(chapter)
-    chapter_html = requester.request_scripture(scripture, book_code, chapter)
-    ext = PageExtractor(chapter_html)
-    return ext.verses()
+    try:
+        return cache.scriptures[language][book_name][chapter]
+    except KeyError:
+        chapter_html = requester.request_scripture(scripture, book_code, chapter)
+        ext = PageExtractor(chapter_html)
+        if cache.enabled:
+            if not cache.scriptures[language].get(book_name):
+                cache.scriptures[language][book_name] = {}
+            cache.scriptures[language][book_name][chapter] = ext.verses()
+        return ext.verses()
 
 
 def get(ref):
@@ -25,7 +33,7 @@ def get(ref):
     :return
 
     '''
-
+    
     if type(ref) == str:
         ref = Reference(ref)
 
@@ -356,3 +364,4 @@ class PageRequester:
 
 if __name__ == '__main__':
     # Nothing :)
+    pass

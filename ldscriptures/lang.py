@@ -23,6 +23,7 @@ def set_default(language):
     if not language in available:
         raise exceptions.InvalidLang(
             'the language "{}" is not an available language (see ldscriptures.lang.available).'.format(language))
+    global default
     default = language
 
 
