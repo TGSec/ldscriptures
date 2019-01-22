@@ -1,6 +1,9 @@
+import re
+
+from .utils import *
 
 
-class Reference(str):
+class Reference(dict):
 
     single_verse = False
     single_chapter = False
@@ -8,38 +11,12 @@ class Reference(str):
 
     _splited_reference = []
 
-    def __new__(self, reference_str):
-        return str.__new__(self, reference_str)
+    def __new__(self, reference_data):
+        return dict.__new__(self, reference_data)
 
-    def __init__(self, initial_value=False):
-        if type(initial_value) == str:
-            self.set_reference(initial_value)
-
-    def set_book_name(self, book_name):
-        if self.book_name == '':
-            raise exceptions.InvalidScriptureReference('no book_name.')
-        self._splited_reference[0] = book_name
-
-    def set_chapters(self, chapters):
-        if chapters == []:
-            raise exceptions.InvalidScriptureReference('no chapter.')
-
-        for n in chapters:
-            if type(n) != int:
-                exceptions.InvalidScriptureReference(
-                    'all chapters must be int.')
-
-        self._splited_reference[1] = chapters
-
-    def set_verses(self, verses):
-        if verses == []:
-            raise exceptions.InvalidScriptureReference('no verse.')
-
-        for n in verses:
-            if type(n) != int:
-                exceptions.InvalidScriptureReference('all verses must be int.')
-
-        self._splited_reference[2] = verses
+    def __init__(self, reference_data):
+        if type(reference_data) == str:
+            self.set_reference(reference_data)
 
     def set_reference(self, reference_str):
         patt = '^(.+) ((?:[0-9]+(?:-[0-9]+)?,?)*)(?::((?:[0-9]+(?:-[0-9]+)?,?)*))?$'
@@ -61,7 +38,9 @@ class Reference(str):
         else:
             _splited_reference[2] = []
 
-        self._splited_reference = _splited_reference
+        self['book_name'] = _splited_reference[0].title()
+        self['chapters'] = _splited_reference[1]
+        self['verses'] = _splited_reference[2]
 
         self.verify()
 
@@ -82,15 +61,15 @@ class Reference(str):
 
     @property
     def book_name(self):
-        return self._splited_reference[0]
+        return self['book_name']
 
     @property
     def chapters(self):
-        return self._splited_reference[1]
+        return self['chapters']
 
     @property
     def verses(self):
-        return self._splited_reference[2]
+        return self['verses']
 
     def verify(self):
         if len(self.chapters) > 1 and self.verses != []:
@@ -145,13 +124,14 @@ class Reference(str):
         if self.no_verse and self.single_chapter:
             return '{book_name} {chapters}'.format(book_name=self.book_name, chapters=self.chapters[0])
         if self.single_verse:
-            return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self.verses)
+            return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self.verses[0])
         if not self.single_verse:
             return '{book_name} {chapters}:{verses}'.format(book_name=self.book_name, chapters=self.chapters[0], verses=self._list_to_str(self.verses))
         if not self.single_chapter:
             return '{book_name} {chapters}'.format(book_name=self.book_name, chapters=self._list_to_str(self.chapters))
 
-    __repr__ = __str__
+    def __repr__(self):
+        return '<Reference: ' + self.__str__() + '>'
 
 
 class Chapter(list):
@@ -170,7 +150,7 @@ class Chapter(list):
 
     def __init__(self, reference, verses):
         list.__init__(self, verses)
-        self.reference = utils.better_capitalize(reference)
+        self.reference = reference
 
         verses_text = ''
 

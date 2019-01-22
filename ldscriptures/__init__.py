@@ -1,7 +1,9 @@
 from .utils import *
+from .classes import *
 from . import lang
 from . import exceptions
 from . import cache
+from . import classes
 
 import re
 import requests
@@ -14,7 +16,9 @@ def request_chapter(book_name, chapter, language):
     book_code = lang.get_book_code(book_name, language)
     chapter = str(chapter)
     try:
-        return cache.scriptures[language][book_name][chapter]
+        cached = cache.scriptures[language][book_name][chapter]
+        if cached != []:
+            return cached
     except KeyError:
         chapter_html = requester.request_scripture(scripture, book_code, chapter)
         ext = PageExtractor(chapter_html)
@@ -146,7 +150,7 @@ class PageRequester:
 
         book_url = '/' + book
 
-        chapter_url = '/' + chapter
+        chapter_url = '/' + str(chapter)
 
         url = utils.scriptures_url_base + scripture_url + \
             book_url + chapter_url + '?lang=' + self.language
