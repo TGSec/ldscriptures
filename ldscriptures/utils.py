@@ -138,5 +138,5 @@ chapter_numbers = {
         "ether": "15",
         "moro": "10"
     },
-    "dc-testament": {}
+    "dc-testament": {'dc': 138}
 }
