@@ -20,7 +20,9 @@ class Reference(dict):
 
     def set_reference(self, reference_str):
         patt = '^(.+) ((?:[0-9]+(?:-[0-9]+)?,?)*)(?::((?:[0-9]+(?:-[0-9]+)?,?)*))?$'
-
+        
+        reference_str = reference_str.replace(' - ', '\u2014')
+        
         if not re.match(patt, reference_str):
             raise exceptions.InvalidScriptureReference(
                 'Regex failure: \'{0}\' is not a valid reference.'.format(reference))
