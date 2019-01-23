@@ -138,5 +138,13 @@ chapter_numbers = {
         "ether": "15",
         "moro": "10"
     },
-    "dc-testament": {'dc': 138}
+    "dc-testament": {'dc': 138},
+    
+    "pgp": {
+        "moses": 8,
+        "abr": 5,
+        "js-m": 1,
+        "js-h": 1,
+        "a-of-f": 1
+    }
 }

@@ -47,7 +47,7 @@ def get_scripture_code(book_name, language):
         scripture = 'bofm'
     elif book_name in [book.lower() for book in language_dict['pgp']]:
         scripture = 'pgp'
-    elif book_name in [book.lower() for book in language_dict['dc_testament']]:
+    elif book_name in [book.lower() for book in language_dict['dc-testament']]:
         scripture = 'dc-testament'
     else:
         raise exceptions.InvalidBook(
