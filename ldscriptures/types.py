@@ -30,6 +30,8 @@ class Reference(dict):
             self.book = book
             self.chapter = chapter
             self.verse = verse
+        else:
+            raise exceptions.InvalidScriptureReference('Is "{}" a valid referene?'.format(reference_string))
 
     def _string_range(self, string):
         divided = string.split(',')
@@ -97,7 +99,7 @@ class Reference(dict):
         return '<Reference: ' + self.__str__() + '>'
 
 
-class Chapter(list):
+class Scripture(list):
 
     def __new__(self, reference, verses):
         return list.__new__(self, verses)
@@ -109,7 +111,7 @@ class Chapter(list):
         verses_text = ''
 
         for verse in verses:
-            verses_text = verses_text + verse + '\n'
+            verses_text = verses_text + verse.full + '\n'
 
         verses_text = verses_text.strip()
 
@@ -120,8 +122,8 @@ class Chapter(list):
 class Verse:
     def __init__(self, html):
         self.html = html
-        for tag in html.findall('sup'):
-            tag.extract()
-        self.number, self.content = self.html.string.split(' ', 1)
-        self.full = html.string
+        for tag in html.find_all('sup'):
+            tag.clear()
+        self.number, self.content = html.text.split(' ', 1)
+        self.full = html.text
         
