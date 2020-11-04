@@ -35,7 +35,7 @@ def get(ref):
 
     book, chapter, verse = ref.book, ref.chapter, ref.verse
 
-    if len(chapter) == 1 and len(verse) > 0:
+    if len(verse) > 0:
         chapter_verses = request_chapter(book, chapter[0], lang.default)
         nverses = []
         for returned_verse in chapter_verses:
@@ -43,7 +43,7 @@ def get(ref):
                 nverses.append(returned_verse)
         return Scripture(ref, nverses)
 
-    if len(chapter) > 1 and len(verse) == 0:
+    if len(verse) == 0:
         req_chapters = []
         for ch in chapter:
             req_chapters.append(
@@ -149,9 +149,11 @@ class ScriptureRequester:
     def request_scripture(self, scripture, book, chapter):
         url = self.url_compose(scripture, book, chapter)
 
-        html = requests.get(url).text
+        html = requests.get(url)
 
-        return html
+        html.encoding = html.apparent_encoding
+
+        return html.text
 
 
 if __name__ == '__main__':
