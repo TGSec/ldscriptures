@@ -1,3 +1,4 @@
+'''
 import cachetools
 from . import lang
 
@@ -9,3 +10,4 @@ scriptures = {}
 
 for each in lang.available:
     scriptures[each] = cachetools.LRUCache(maxsize=maxsize)
+'''
