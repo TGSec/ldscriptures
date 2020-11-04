@@ -124,6 +124,7 @@ class Verse:
         self.html = html
         for tag in html.find_all('sup'):
             tag.clear()
-        self.number, self.content = html.text.split(' ', 1)
+        self.number, self.content = html.get_text().strip().split(' ', 1)
+        self.number = int(self.number)
         self.full = html.text
         

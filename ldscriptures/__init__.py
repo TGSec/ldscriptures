@@ -10,22 +10,15 @@ from bs4 import BeautifulSoup
 
 
 def request_chapter(book_name, chapter, language):
-    requester = PageRequester(language)
-    scripture = lang.match_scripture(book_name, language)
+    requester = ScriptureRequester(language)
+    scripture = lang.get_scripture_code(book_name, language)
     book_code = lang.get_book_code(book_name, language)
     chapter = str(chapter)
-    try:
-        cached = cache.scriptures[language][book_name][chapter]
-        if cached != []:
-            return cached
-    except KeyError:
-        chapter_html = requester.request_scripture(scripture, book_code, chapter)
-        ext = PageExtractor(chapter_html)
-        if cache.enabled:
-            if not cache.scriptures[language].get(book_name):
-                cache.scriptures[language][book_name] = {}
-            cache.scriptures[language][book_name][chapter] = ext.verses()
-        return ext.verses()
+
+    chapter_html = requester.request_scripture(scripture, book_code, chapter)
+    ext = ScriptureExtractor(chapter_html)
+
+    return ext.verses()
 
 
 def get(ref):
@@ -42,19 +35,19 @@ def get(ref):
 
     book, chapter, verse = ref.book, ref.chapter, ref.verse
 
-    if len(chapter) == 1 and len(verses) > 0:
-        chapter_verses = request_chapter(book_name, chapter[0], lang.default)
+    if len(chapter) == 1 and len(verse) > 0:
+        chapter_verses = request_chapter(book, chapter[0], lang.default)
         nverses = []
-        for verse in chapter_verses:
-            if verse.number in verses:
-                nverses.append(verse)
-        return Chapter(ref, nverses)
+        for returned_verse in chapter_verses:
+            if returned_verse.number in verse:
+                nverses.append(returned_verse)
+        return Scripture(ref, nverses)
 
-    if len(chapter) > 1 and len(verses) == 0:
+    if len(chapter) > 1 and len(verse) == 0:
         req_chapters = []
         for ch in chapter:
             req_chapters.append(
-                Chapter(ref, request_chapter(book_name, str(ch), lang.default)))
+                Scripture(ref, request_chapter(book, str(ch), lang.default)))
         return req_chapters
 
 
@@ -67,7 +60,7 @@ class ScriptureExtractor:
     '''
 
     def __init__(self, html):
-        self.html = BeautifulSoup(html, 'html.parser')
+        self.html = BeautifulSoup(html, 'lxml')
 
     def _clean(self, text):
         return text.replace('\u2014', ' - ').replace('\xa0', '').replace('\u2019', '\'')
