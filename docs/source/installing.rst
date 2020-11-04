@@ -3,8 +3,9 @@
 Installing
 ==========
 
-Beginning from the begin, we need to first install the library before we start using it.
-The recommended installation method is the default Python module manager *pip*. You can also install it by downloading the project in Github and running the setup.py.
+Before using the library, we need to install it.
+The recommended installation method is the default Python module manager *pip*.
+You can also install it by downloading the project in Github and running the setup.py.
 Both methods will be explained in this article.
 
 Installation via pip
@@ -25,7 +26,7 @@ Of, if you want to update it:
 Installing via setup.py
 -----------------------
 
-Ok, ok, you want the hard way. First, you need to download the `zip file`__ containing the module, from Github.
+But if you want to do it the hard way, you'll need to download the `zip file`__ containing the module, from Github.
 
 __ https://github.com/TGSec/ldscriptures/archive/master.zip
 
