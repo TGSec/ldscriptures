@@ -3,7 +3,7 @@ from .classes import *
 from . import lang
 from . import exceptions
 from . import cache
-from . import classes
+from . import types
 
 import re
 import requests
