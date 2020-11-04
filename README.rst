@@ -11,9 +11,9 @@ Basic Usage
 
    import ldscriptures as lds
    
-   chapter = lds.get('2 Nephi 28:30')
+   scripture = lds.get('2 Nephi 28:30')
    
-   print(chapter.text)
+   print(scripture.text)
 
 Output:
 
