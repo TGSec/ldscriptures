@@ -1,9 +1,8 @@
 from .utils import *
-from .classes import *
+from .types import *
 from . import lang
 from . import exceptions
 from . import cache
-from . import types
 
 import re
 import requests
@@ -41,7 +40,7 @@ def get(ref):
     if type(ref) == str:
         ref = Reference(ref)
 
-    book_name, chapter, verses = ref.book_name, ref.chapters, ref.verses
+    book, chapter, verse = ref.book, ref.chapter, ref.verse
 
     if len(chapter) == 1 and len(verses) > 0:
         chapter_verses = request_chapter(book_name, chapter[0], lang.default)
@@ -59,9 +58,9 @@ def get(ref):
         return req_chapters
 
 
-class PageExtractor:
+class ScriptureExtractor:
     '''
-    A powerful class that extracts the scriptural information from lds.org html.
+    A powerful class that extracts the scriptural information from churchofjesuschrist.org html.
 
     :param str html: The html whose information will be extracted.
 
@@ -80,13 +79,10 @@ class PageExtractor:
         '''
         verses = []
 
-        html = self.html
-        brute_verses = html.find_all('p', {'class': 'verse'})
+        raw_verses = self.html.find_all('p', class_='verse')
 
-        for verse in brute_verses:
-            for tag in verse.find_all('sup'):
-                tag.clear()
-            verse = Verse(self._clean(verse.get_text()).replace(chr(182), ''))
+        for raw_verse in raw_verses:
+            verse = Verse(raw_verse)
             verses.append(verse)
 
         return verses
@@ -140,7 +136,7 @@ class PageExtractor:
         return official_dec
 
 
-class PageRequester:
+class ScriptureRequester:
 
     def __init__(self, language=lang.default):
         self.language = language
@@ -152,7 +148,7 @@ class PageRequester:
 
         chapter_url = '/' + str(chapter)
 
-        url = utils.scriptures_url_base + scripture_url + \
+        url = scriptures_url_base + scripture_url + \
             book_url + chapter_url + '?lang=' + self.language
 
         return url
@@ -166,5 +162,4 @@ class PageRequester:
 
 
 if __name__ == '__main__':
-    # Nothing :)
     pass
